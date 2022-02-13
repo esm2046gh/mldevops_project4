@@ -1,12 +1,9 @@
-#from flask import Flask, session, jsonify, request
 import pandas as pd
 import numpy as np
 import pickle
 import os
 import json
-#from sklearn import metrics
-#from sklearn.model_selection import train_test_split
-#from sklearn.linear_model import LogisticRegression
+import shutil
 
 
 #%% global variables & constants
@@ -24,6 +21,7 @@ output_feature = "exited"
 
 #%% Functions
 
+# loa dataframe from file
 def load_dataframe(folder_name, file_name):
     dataset_csv_path = os.path.join(os.getcwd(), config[folder_name], file_name)
     df = pd.read_csv(dataset_csv_path)
@@ -39,7 +37,8 @@ def save_object(obj, folder_name, file_name):
     the_path = os.path.join(os.getcwd(), config[folder_name], file_name)
     with open(the_path, 'wb') as a_file:
         pickle.dump(obj, a_file, pickle.HIGHEST_PROTOCOL)
-   
+
+# load pickle object    
 def load_object(folder_name, file_name):
     the_path = os.path.join(os.getcwd(), config[folder_name], file_name)
     with open(the_path, 'rb') as a_file:
@@ -47,12 +46,16 @@ def load_object(folder_name, file_name):
 
     return obj
 
-#save value to file
+# save value to file
 def save_value(value, folder_name, file_name, append_to_file = False):
     the_path = os.path.join(os.getcwd(), config[folder_name], file_name)
     with open(the_path, 'a+' if append_to_file == True else 'w') as a_file:
         a_file.write(str(value) + '\n')
         a_file.close()
    
-
-
+# copy files
+def copy_files(src_dir, src_file, dst_dir, dst_file=""):
+    src = os.path.join(os.getcwd(), config[src_dir], src_file)
+    dst = os.path.join(os.getcwd(), config[dst_dir], dst_file)
+    #dst = dst[:-1] if dst_file == "" else dst
+    shutil.copy2(src, dst)

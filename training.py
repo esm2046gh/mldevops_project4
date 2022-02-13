@@ -1,11 +1,12 @@
-#from flask import Flask, session, jsonify, request
-#from sklearn import metrics
-#from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 import commons_proj as cproj
 
+#%% global variables & constants
 
-#%% Model training
+
+#%% Functions
+
+# Model training
 def train_model(X, y):
     # Use this logistic regression for training
     model = LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,

@@ -1,8 +1,8 @@
-#from flask import Flask, session, jsonify, request
 from sklearn import metrics
-#from sklearn.model_selection import train_test_split
-#from sklearn.linear_model import LogisticRegression
 import commons_proj as cproj
+
+
+#%% global variables & constants
 
 
 #%% Functions
