@@ -13,8 +13,7 @@ def score_model(real, predicted):
     f1_score = metrics.f1_score(real, predicted, zero_division=1)
     return f1_score
 
-#%%
-if __name__ == '__main__':
+def scoring_main():
     # load test data
     test_data = cproj.load_dataframe('test_data_path', 'testdata.csv')
     # load the trained model
@@ -27,3 +26,7 @@ if __name__ == '__main__':
     f1_score = round(score_model(y, predicted), 7)
     # save score
     cproj.save_value(f1_score, 'output_model_path', 'latestscore.txt', True)
+
+#%%
+if __name__ == '__main__':
+    scoring_main()

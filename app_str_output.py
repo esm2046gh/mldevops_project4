@@ -26,7 +26,7 @@ app.secret_key = '1652d576-484a-49fd-913a-6879acfa6ba4'
 def index():
     user = request.args.get('user')
     #session['user'] = user
-    return jsonify({"greetings": "Hello " + user})
+    return "Hello " + user
 
 
 #%% Prediction Endpoint
@@ -45,7 +45,7 @@ def predict():
     filename = request.args.get('filename', default='*', type=str)
     test_data = cproj.load_dataframe(dirtype, filename)
     predicted, _ = model_predictions(test_data)
-    return jsonify(predicted.tolist())
+    return str(predicted.tolist())
 
 #%% Scoring Endpoint
 #http://127.0.0.1:8000/scoring
@@ -57,11 +57,10 @@ def scoring():
     #     return redirect(url_for("index"))
 
     subprocess.run(['python', 'scoring.py'])
-
     f1_score = cproj.load_txt_file('output_model_path', 'latestscore.txt')
-    f1_score = f1_score.split() #converting list to string
-    np.float_(f1_score)
-    return jsonify(f1_score)
+    f1_score = [w.replace('\n', '') for w in f1_score]
+    return str(f1_score)
+
 
 #%% Summary Statistics Endpoint
 #http://127.0.0.1:8000/summarystats
@@ -73,9 +72,7 @@ def stats_num_inputs():
     #     return redirect(url_for("index"))
 
     numeric_inputs_stats = numeric_inputs_summary()
-    json_var = numeric_inputs_stats.to_json() #(orient="split")
-    parsed = json.loads(json_var)
-    return parsed
+    return str(numeric_inputs_stats)
 
 #%% Diagnostics Endpoint
 #http://127.0.0.1:8000/diagnostics
@@ -89,15 +86,11 @@ def diags_summary():
     na_percent = na_percent_summary()
     exec_time = execution_time()
     outdated_df = outdated_packages_list()
-    outdated_dict = outdated_df.to_dict()
-    json_var1 = na_percent.to_json()
-    dict_var2 = {'execution_times': exec_time}
-    dict_var3 = {'outdated_packages': outdated_dict}
-    json_all = json.loads(json_var1)
-    json_all.update(dict_var2)
-    json_all.update(dict_var3)
+    dict_all = {'na_percent': na_percent.values.tolist(),
+                'exec_time':list(exec_time.items()),
+                'packages': outdated_df.values.tolist()}
 
-    return json_all
+    return str(dict_all)
 
 #%%
 if __name__ == "__main__":    
