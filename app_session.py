@@ -21,12 +21,39 @@ from diagnostics import outdated_packages_list
 app = Flask(__name__)
 app.secret_key = '1652d576-484a-49fd-913a-6879acfa6ba4'
 
-#http://127.0.0.1:8000/?user=aaa
+#%% http://127.0.0.1:8000/
 @app.route('/')
 def index():
-    user = request.args.get('user')
-    #session['user'] = user
-    return jsonify({"greetings": "Hello " + user})
+    if 'user' in session:
+        return f'Logged in as {session["user"]}\n', True
+    return 'You are not logged in', False
+
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'POST':
+#         session['user'] = request.form['user']
+#         return redirect(url_for('index'))
+#     return '''
+#         <form method="post">
+#             <p><input type=text name=user>
+#             <p><input type=submit value=Login>
+#         </form>
+#     '''
+#
+
+#%% login - logout
+#http://127.0.0.1:8000/login?user=esm
+@app.route('/login')
+def login():
+    session['user'] = request.args.get('user', default='*', type=str)
+    return redirect(url_for('index'))
+
+#http://127.0.0.1:8000/logout
+@app.route('/logout')
+def logout():
+    # remove the user from the session if it's there
+    session.pop('user', None)
+    return redirect(url_for('index'))
 
 
 #%% Prediction Endpoint
@@ -36,10 +63,8 @@ def index():
 @app.route("/prediction")
 def predict():        
     #call the prediction function you created in Step 3
-    # curl "http://127.0.0.1:8000/prediction?dirtype=test_data_path&filename=testdata.csv"
-
-    # if 'user' not in session:
-    #     return redirect(url_for("index"))
+    if 'user' not in session:
+        return redirect(url_for("index"))
 
     dirtype  = request.args.get('dirtype', default='*', type=str)
     filename = request.args.get('filename', default='*', type=str)
@@ -53,15 +78,15 @@ def predict():
 @app.route("/scoring")
 def scoring():
     #check the score of the deployed model
-    # if 'user' not in session:
-    #     return redirect(url_for("index"))
+    if 'user' not in session:
+        return redirect(url_for("index"))
 
     subprocess.run(['python', 'scoring.py'])
 
     f1_score = cproj.load_txt_file('output_model_path', 'latestscore.txt')
-    f1_score = f1_score.split() #converting list to string
-    np.float_(f1_score)
-    return jsonify(f1_score)
+    f1_score = f1_score.split()
+    return jsonify(list(np.float_(f1_score)))
+
 
 #%% Summary Statistics Endpoint
 #http://127.0.0.1:8000/summarystats
@@ -69,8 +94,8 @@ def scoring():
 @app.route("/summarystats")
 def stats_num_inputs():
     #check the score of the deployed model
-    # if 'user' not in session:
-    #     return redirect(url_for("index"))
+    if 'user' not in session:
+        return redirect(url_for("index"))
 
     numeric_inputs_stats = numeric_inputs_summary()
     json_var = numeric_inputs_stats.to_json() #(orient="split")
@@ -82,8 +107,8 @@ def stats_num_inputs():
 #@app.route("/diagnostics", methods=['GET','OPTIONS'])
 @app.route("/diagnostics")
 def diags_summary():
-    # if 'user' not in session:
-    #     return redirect(url_for("index"))
+    if 'user' not in session:
+        return redirect(url_for("index"))
 
     #check timing and percent NA values
     na_percent = na_percent_summary()
@@ -93,6 +118,7 @@ def diags_summary():
     json_var1 = na_percent.to_json()
     dict_var2 = {'execution_times': exec_time}
     dict_var3 = {'outdated_packages': outdated_dict}
+
     json_all = json.loads(json_var1)
     json_all.update(dict_var2)
     json_all.update(dict_var3)

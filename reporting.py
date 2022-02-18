@@ -1,32 +1,30 @@
-import pickle
-from sklearn.model_selection import train_test_split
-import pandas as pd
-import numpy as np
-from sklearn import metrics
-import matplotlib.pyplot as plt
-import seaborn as sns
-import json
 import os
-
-
-
-###############Load config.json and get path variables
-with open('config.json','r') as f:
-    config = json.load(f) 
-
-dataset_csv_path = os.path.join(config['output_folder_path']) 
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import commons_proj as cproj
+from diagnostics import model_predictions
 
 
 
 
-##############Function for reporting
+#%% Function for reporting
+
 def score_model():
-    #calculate a confusion matrix using the test data and the deployed model
+    test_data = cproj.load_dataframe('test_data_path', 'testdata.csv')
+    predicted, y_test = model_predictions(test_data)
+    
+    #calculate a confusion matrix 
+    cm = confusion_matrix(y_test, predicted)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp.plot()
+    #plt.show()
+    
     #write the confusion matrix to the workspace
-
-
-
-
+    file_path = os.path.join(os.getcwd(), cproj.config['output_model_path'], 'confusionmatrix.png')
+    plt.title('Confusion Matrix. Attrition Risk')
+    plt.ylabel('Real')
+    plt.xlabel('Predicted')
+    plt.savefig(file_path)
 
 if __name__ == '__main__':
     score_model()
