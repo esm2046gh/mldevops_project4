@@ -86,19 +86,21 @@ def outdated_packages_list():
 
 #%%
 if __name__ == '__main__':
-    # df = cproj.load_dataframe('test_data_path', 'testdata.csv')
-    # predicted, y = model_predictions(df)
-    
-    #stats_summary = numeric_inputs_summary()
-    # print(stats)
-    # print(na)
-    # execution_times = execution_time()
-    # print(execution_times)
-    # outdated_df = outdated_packages_list()
-    #pack, inst, latest = get_package_versions('cycler')
-    #print(f"pack: {pack}, inst: {inst}, latest: {latest}")
-    pass
-    
+    fname = 'diagnostics.py'
+    print(f"- {fname}. -->") 
+    df = cproj.load_dataframe('test_data_path', 'testdata.csv')
+    predicted, _ = model_predictions(df)
+    numeric_inputs = numeric_inputs_summary()
+    na_percent = na_percent_summary()
+    exec_time = execution_time()
+    outdated_df = outdated_packages_list()
+    outdated_dict = outdated_df.to_dict()
+    print(f"- {fname}. model_predictions:\n{predicted}")
+    print(f"- {fname}. numeric_inputs_stats:\n{numeric_inputs}")
+    print(f"- {fname}. na_percent:\n{na_percent}")
+    print(f"- {fname}. exec_time:\n{exec_time}")
+    print(f"- {fname}. outdated_df:\n{outdated_df}")
+    print(f"- {fname}. <--") 
     
     
    

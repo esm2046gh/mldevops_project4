@@ -1,12 +1,15 @@
-import requests
+import os
+#import requests
 import subprocess
-from subprocess import DEVNULL, STDOUT, check_call
+#from subprocess import DEVNULL, STDOUT, check_call
 import json
+import commons_proj as cproj
 
 #Specify a URL that resolves to your workspace
 URL = "http://127.0.0.1:8000/"
 
-
+fname = 'apicalls.py'
+print(f"- {fname}. -->") 
 
 #res1_greetings=subprocess.run(['curl', URL+'?user=esm'],capture_output=True).stdout
 res1_greetings = subprocess.Popen('curl ' + URL +'?user=esm', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
@@ -34,6 +37,10 @@ responses = {'greetings': res1_greetings,
              'summarystats': res4_summarystats,
              'diagnostics': res5_diagnostics
 }
-
-with open('apireturns.json', 'w') as fp:
+file_name = 'apireturns_'+ cproj.config['output_model_path'] + '.json'
+file_path = os.path.join(os.getcwd(), cproj.config['output_model_path'], file_name)
+with open(file_path, 'w') as fp:
     json.dump(responses, fp, indent=4)
+ 
+print(f"- json.dump file_name: {file_name}") 
+print(f"- {fname}. <--") 

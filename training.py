@@ -1,5 +1,6 @@
 from sklearn.linear_model import LogisticRegression
 import commons_proj as cproj
+#from scoring import score_model
 
 #%% global variables & constants
 
@@ -18,13 +19,20 @@ def train_model(X, y):
     #fit the logistic regression to your data
     model = model.fit(X, y)
     
-    return model
+    # predicted = model.predict(X)
+    # f1_score = round(score_model(y, predicted), 7)
+    
+    return model #, f1_score
 
  
 #%%
 if __name__ == '__main__':
+    fname = 'training.py'
+    print(f"- {fname}. -->") 
     data = cproj.load_dataframe('output_folder_path', 'finaldata.csv')
     X, y = cproj.prepare_data(data, cproj.input_features, cproj.output_feature)
-    model = train_model(X, y)
+    model = train_model(X, y) #model, score_val = train_model(X, y)
     cproj.save_object(model, 'output_model_path', 'trainedmodel.pkl')
+    #cproj.save_value(score_val, 'output_model_path', 'latestscore.txt')
+    print(f"- {fname}. <--") 
  

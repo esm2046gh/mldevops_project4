@@ -14,6 +14,9 @@ def store_into_deployment_dir():
 
 #%%
 if __name__ == '__main__':
+    fname = 'deployment.py'
+    print(f"- {fname}. -->") 
     store_into_deployment_dir()   
+    print(f"- {fname}. <--") 
         
 

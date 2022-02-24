@@ -4,11 +4,10 @@ import os
 import json
 from datetime import datetime
 
-
-
-
 #%% Function for data ingestion
-def merge_multiple_dataframe():
+def merge_multiple_dataframes():
+    fname = 'merge_multiple_dataframes'
+    print(f"- {fname}. -->") 
 
     # Load config.json and get input and output paths
     with open('config.json', 'r') as f:
@@ -34,6 +33,7 @@ def merge_multiple_dataframe():
         print('- All tables have the same columns')
     else:
         print('- Some table(s) have different columns')
+        print(f"- {fname}. <--") 
         return None
 
     #merge the dataframes
@@ -56,9 +56,10 @@ def merge_multiple_dataframe():
         textfile.write(element + "\n")
     textfile.close()
     
+    print(f"- {fname}. <--") 
     return merged_dfs
 
 
 #%%
 if __name__ == '__main__':
-    dataframes = merge_multiple_dataframe()
+    dataframes = merge_multiple_dataframes()

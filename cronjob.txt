@@ -1,0 +1,55 @@
+# https://linuxize.com/post/cron-jobs-every-5-10-15-minutes/
+# * * * * * command(s)
+# ^ ^ ^ ^ ^
+# | | | | |     allowed values
+# | | | | |     -------
+# | | | | ----- Day of week (0 - 7) (Sunday=0 or 7)
+# | | | ------- Month (1 - 12)
+# | | --------- Day of month (1 - 31)
+# | ----------- Hour (0 - 23)
+# ------------- Minute (0 - 59)
+#
+# */10  * * * * command
+#
+# make sure that the cron service is running as follows:
+# - sudo service cron start or service cron start
+# Next, you can open your machine's crontab (config file):
+# - crontab -e
+#
+# cronjob to run fullprocess.py every 2 minutes:
+# - */2  * * * * python mnt/d/ml/mldevops_project4/fullprocess.py
+# see in lofiles if running
+$ sudo grep –a “Cron.sh” /var/log/syslog
+- Use 'which cron' to check its installed, mine says /usr/sbin/cron.
+
+- Use 'crontab -e' to edit crons config file
+
+- Use 'crontab -l' to list your configured jobs.
+
+- Use 'ps aux | grep cron' to look see if cron is running, you should see /usr/sbin/cron if it is.
+
+- Use 'service cron status' to check if the service is started.
+
+- Use 'sudo service cron start' to start/stop the cron service if it is not running.
+
+- Use a shell file if problems running the cronjob. See example below
+
+cronjob_test.sh
+---------------
+#! /bin/bash    
+source /home/esmlinux/miniconda3/etc/profile.d/conda.sh && \
+conda activate mldevops_project4 && \
+cd /mnt/d/ml/mldevops_project4
+python cronjob_test.py 
+
+cronjob_test.py
+---------------
+from datetime import datetime
+
+with open('cronjob_test.txt', 'a+') as a_file:
+    now_str = datetime.now().strftime('%Y.%m.%d_%H.%M.%S')
+    a_file.write(now_str + '. Hello cronjob.\n')
+    
+In cron config-file (crontab -e)
+--------------------------------
+* * * * * /mnt/d/ml/mldevops_project4/cronjob_test.sh  >/dev/null 2>&1
